@@ -1,4 +1,4 @@
-import{a as e,n as t,o as n,t as r}from"./app-BBji5VRM.js";var i=t(),a=e(),o=`/assets/react-CHdo91hT.svg`,s=`/vite.svg`,c=`#root {\r
+import{a as e,n as t,o as n,t as r}from"./app-Di8wYzG_.js";var i=t(),a=e(),o=`/assets/react-CHdo91hT.svg`,s=`/vite.svg`,c=`#root {\r
 	max-width: 1280px;\r
 	margin: 0 auto;\r
 	padding: 2rem;\r
