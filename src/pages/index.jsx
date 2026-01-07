@@ -27,13 +27,13 @@ export default function HomePage() {
 
 	const links = [
 		{
-			to: "app",
+			to: "/app",
 			title: "初始畫面",
 			image:
 				"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop",
 		},
 		{
-			to: "game/firstGame",
+			to: "/game/firstGame",
 			title: "吃星星",
 			image:
 				"https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=300&fit=crop",

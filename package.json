@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://smilin.net/tutorial-phaser",
+  "homepage": "https://smilin.net/tutorial-phaser/",
   "scripts": {
     "lint": "eslint .",
     "dev": "vite-react-ssg dev",
