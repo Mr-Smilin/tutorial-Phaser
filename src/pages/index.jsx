@@ -28,23 +28,15 @@ export default function HomePage() {
 	const links = [
 		{
 			to: "/app",
-			title: "App",
+			title: "初始畫面",
 			image:
 				"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop",
 		},
 		{
-			to: "/game/day1",
-			title: "Day 1",
+			to: "/game/firstGame",
+			title: "吃星星",
 			image:
 				"https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=300&fit=crop",
-		},
-		{
-			to: "/game/day3",
-			title: "Day 3",
-		},
-		{
-			to: "/game/day5",
-			title: "Day 5",
 		},
 	];
 

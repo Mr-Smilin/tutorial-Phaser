@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const imageModules = import.meta.glob("../../../assets/game/*.png", {
+const imageModules = import.meta.glob("../../../assets/firstGame/*.png", {
 	eager: true,
 	import: "default",
 });
