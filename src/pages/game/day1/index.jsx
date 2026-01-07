@@ -50,7 +50,7 @@ function GameComponent() {
 export default function GamePage() {
 	return (
 		<div>
-			<h1>Phaser 遊戲</h1>
+			<h1>Phaser 黑布</h1>
 			<GameComponent />
 		</div>
 	);

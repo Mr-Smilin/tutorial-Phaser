@@ -1,6 +1,6 @@
 import { ViteReactSSG } from "vite-react-ssg";
 import routes from "~react-pages"; // 自動生成的路由
-import "./index.css";
+import "./global.css";
 
 export const createRoot = ViteReactSSG(
 	{ routes },
