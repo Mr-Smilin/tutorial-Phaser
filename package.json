@@ -1,15 +1,18 @@
 {
   "name": "tutorial-phaser",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "homepage": "https://smilin.net/tutorial-phaser",
   "scripts": {
     "lint": "eslint .",
     "dev": "vite-react-ssg dev",
     "build": "vite-react-ssg build",
     "vite-dev": "vite",
     "vite-build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "phaser": "^3.90.0",
@@ -26,6 +29,7 @@
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
+    "gh-pages": "^6.3.0",
     "globals": "^16.5.0",
     "react-router-dom": "^6.30.2",
     "vite": "npm:rolldown-vite@7.2.5",
