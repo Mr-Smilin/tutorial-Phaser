@@ -1,8 +1,5 @@
-import{a as e,n as t,o as n,t as r}from"./app-C4he6iUA.js";var i=t(),a=e(),o=`/tutorial-phaser/assets/react-CHdo91hT.svg`,s=`/tutorial-phaser/vite.svg`,c=`#root {\r
+import{a as e,n as t,o as n,t as r}from"./app-DloFfzCe.js";var i=t(),a=e(),o=`/tutorial-phaser/assets/react-CHdo91hT.svg`,s=`/tutorial-phaser/vite.svg`,c=`#root {\r
 	max-width: 1280px;\r
-	margin: 0 auto;\r
-	padding: 2rem;\r
-	text-align: center;\r
 }\r
 \r
 .logo {\r
