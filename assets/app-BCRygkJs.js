@@ -1,4 +1,4 @@
-import{a as e,n as t,o as n,t as r}from"./app-DloFfzCe.js";var i=t(),a=e(),o=`/tutorial-phaser/assets/react-CHdo91hT.svg`,s=`/tutorial-phaser/vite.svg`,c=`#root {\r
+import{a as e,n as t,o as n,t as r}from"./app-CQvM3z7x.js";var i=t(),a=e(),o=`/tutorial-phaser/assets/react-CHdo91hT.svg`,s=`/tutorial-phaser/vite.svg`,c=`#root {\r
 	max-width: 1280px;\r
 }\r
 \r
