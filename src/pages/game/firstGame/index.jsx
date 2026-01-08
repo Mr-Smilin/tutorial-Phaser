@@ -1,4 +1,8 @@
 import { useEffect, useRef } from "react";
+import { createGlobalStyle } from "styled-components";
+import css from "./style.css?raw";
+
+const PageStyles = createGlobalStyle`${css}`;
 
 const imageModules = import.meta.glob("../../../assets/firstGame/*.png", {
 	eager: true,
@@ -19,6 +23,7 @@ function GameComponent() {
 		if (typeof window === "undefined") return;
 
 		let Phaser;
+		let self;
 		// 靜態物件們(可碰撞，不可移動)
 		let platforms;
 		// 玩家
@@ -34,6 +39,11 @@ function GameComponent() {
 		let scoreText;
 		// 遊戲結束
 		let gameOver = false;
+		// 觸控移動相關
+		let isTouching = false;
+		let touchStartY = 0;
+		// 虛擬搖桿
+		let joyStick;
 
 		const initGame = async () => {
 			const PhaserModule = await import("phaser");
@@ -41,9 +51,13 @@ function GameComponent() {
 
 			const config = {
 				type: Phaser.AUTO,
-				width: 800,
-				height: 600,
-				parent: "phaser-game",
+				scale: {
+					mode: Phaser.Scale.FIT,
+					parent: "phaser-game",
+					autoCenter: Phaser.Scale.CENTER_BOTH,
+					width: 800,
+					height: 600,
+				},
 				physics: {
 					default: "arcade",
 					arcade: {
@@ -58,12 +72,13 @@ function GameComponent() {
 		};
 
 		function preload() {
+			self = this;
 			// 載入資源
-			this.load.image("sky", images?.sky);
-			this.load.image("ground", images?.platform);
-			this.load.image("star", images?.star);
-			this.load.image("bomb", images?.bomb);
-			this.load.spritesheet("dude", images?.dude, {
+			self.load.image("sky", images?.sky);
+			self.load.image("ground", images?.platform);
+			self.load.image("star", images?.star);
+			self.load.image("bomb", images?.bomb);
+			self.load.spritesheet("dude", images?.dude, {
 				frameWidth: 32,
 				frameHeight: 48,
 			});
@@ -71,9 +86,9 @@ function GameComponent() {
 
 		function create() {
 			// 建立遊戲物件
-			this.add.image(0, 0, "sky").setOrigin(0, 0);
+			self.add.image(0, 0, "sky").setOrigin(0, 0);
 
-			platforms = this.physics.add.staticGroup();
+			platforms = self.physics.add.staticGroup();
 
 			platforms
 				.create(400, 568, "ground")
@@ -85,7 +100,7 @@ function GameComponent() {
 			platforms.create(50, 250, "ground");
 			platforms.create(750, 220, "ground");
 
-			stars = this.physics.add
+			stars = self.physics.add
 				.group({
 					key: "star",
 					repeat: 11,
@@ -97,50 +112,56 @@ function GameComponent() {
 				child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
 			});
 
-			bombs = this.physics.add.group().setOrigin(0, 0);
+			bombs = self.physics.add.group().setOrigin(0, 0);
 
 			// 建立角色
-			player = this.physics.add.sprite(100, 450, "dude");
+			player = self.physics.add.sprite(100, 450, "dude");
 			// 設定角色碰撞物體的彈跳幅度
 			player.setBounce(0.2);
 			// 設定角色碰到世界邊緣與靜態物件碰撞相同
 			player.setCollideWorldBounds(true);
 
-			this.anims.create({
+			self.anims.create({
 				key: "left",
-				frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
+				frames: self.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
 				frameRate: 10,
 				repeat: -1, // 要循環播放
 			});
 
-			this.anims.create({
+			self.anims.create({
 				key: "turn",
 				frames: [{ key: "dude", frame: 4 }],
 				frameRate: 20,
 			});
 
-			this.anims.create({
+			self.anims.create({
 				key: "right",
-				frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
+				frames: self.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
 				frameRate: 10,
 				repeat: -1,
 			});
 
 			// 處理碰撞
-			this.physics.add.collider(player, platforms);
-			this.physics.add.collider(stars, platforms);
-			this.physics.add.collider(bombs, platforms);
-			this.physics.add.overlap(player, stars, collectStar, null, this);
-			this.physics.add.collider(player, bombs, hitBomb, null, this);
+			self.physics.add.collider(player, platforms);
+			self.physics.add.collider(stars, platforms);
+			self.physics.add.collider(bombs, platforms);
+			self.physics.add.overlap(player, stars, collectStar, null, this);
+			self.physics.add.collider(player, bombs, hitBomb, null, this);
 
 			// 建立鍵盤事件讀取器
-			cursors = this.input.keyboard.createCursorKeys();
+			cursors = self.input.keyboard.createCursorKeys();
 
 			// 處理得分板
-			scoreText = this.add.text(16, 16, "score: 0", {
+			scoreText = self.add.text(16, 16, "score: 0", {
 				fontSize: "32px",
 				fill: "#000",
 			});
+
+			// 處理點擊移動
+			// 相對位置
+			// moveByRelative();
+			// 虛擬搖桿
+			moveByJoy();
 		}
 
 		function update() {
@@ -148,18 +169,25 @@ function GameComponent() {
 			if (gameOver) {
 				return;
 			}
-			if (cursors.left.isDown) {
-				player.setVelocityX(-160);
-				player.anims.play("left", true);
-			} else if (cursors.right.isDown) {
-				player.setVelocityX(160);
-				player.anims.play("right", true);
+
+			// 只在桌面且沒有觸控時才用鍵盤
+			if (!self.input.activePointer.isDown && !!cursors) {
+				if (cursors.left.isDown) {
+					player.setVelocityX(-160);
+					player.anims.play("left", true);
+				} else if (cursors.right.isDown) {
+					player.setVelocityX(160);
+					player.anims.play("right", true);
+				} else {
+					player.setVelocityX(0);
+					player.anims.play("turn");
+				}
+
+				if (cursors.up.isDown && player.body.touching.down) {
+					player.setVelocityY(-330);
+				}
 			} else {
-				player.setVelocityX(0);
-				player.anims.play("turn");
-			}
-			if (cursors.up.isDown && player.body.touching.down) {
-				player.setVelocityY(-330);
+				handleJoy();
 			}
 		}
 
@@ -191,13 +219,131 @@ function GameComponent() {
 
 		// 玩家碰到炸彈的處理
 		function hitBomb(player, bomb) {
-			this.physics.pause();
+			self.physics.pause();
 
 			player.setTint(0xff0000);
 
 			player.anims.play("turn");
 
 			gameOver = true;
+		}
+
+		// 透過相對位置觸控移動
+		function moveByRelative() {
+			// 觸控開始
+			self.input.on(
+				"pointerdown",
+				function (pointer) {
+					isTouching = true;
+					touchStartY = pointer.y;
+				},
+				this
+			);
+
+			// 觸控移動
+			self.input.on(
+				"pointermove",
+				function (pointer) {
+					if (!isTouching) return;
+
+					const screenWidth = self.cameras.main.width;
+					const edgeThreshold = 100; // 邊緣判定區域寬度
+
+					// 判定移動方向
+					let direction = 0;
+
+					if (pointer.x < edgeThreshold) {
+						// 左邊緣固定判定
+						direction = -1;
+					} else if (pointer.x > screenWidth - edgeThreshold) {
+						// 右邊緣固定判定
+						direction = 1;
+					} else {
+						// 中間區域：根據相對角色位置判定
+						direction = pointer.x > player.x ? 1 : -1;
+					}
+
+					if (direction === -1) {
+						player.setVelocityX(-160);
+						player.anims.play("left", true);
+					} else if (direction === 1) {
+						player.setVelocityX(160);
+						player.anims.play("right", true);
+					}
+
+					// 判定是否為跳躍（垂直滑動超過閾值）
+					const swipeDistance = Math.abs(pointer.y - touchStartY);
+					if (swipeDistance > 30 && player.body.touching.down) {
+						player.setVelocityY(-330);
+					}
+				},
+				this
+			);
+
+			// 觸控結束
+			self.input.on(
+				"pointerup",
+				function (pointer) {
+					isTouching = false;
+
+					player.setVelocityX(0);
+					player.anims.play("turn");
+				},
+				this
+			);
+		}
+
+		// 透過虛擬搖桿移動
+		async function moveByJoy() {
+			// 前端動態載入
+			const rexVirtualJoystickModule = await import(
+				"phaser3-rex-plugins/plugins/virtualjoystick.js"
+			);
+			const rexVirtualJoystick =
+				rexVirtualJoystickModule.default || rexVirtualJoystickModule;
+			// 新增虛擬搖桿
+			joyStick = new rexVirtualJoystick(this, {
+				x: 100,
+				y: 500,
+				radius: 50,
+				base: self.add.circle(0, 0, 50, 0x888888, 0.5),
+				thumb: self.add.circle(0, 0, 25, 0xcccccc, 0.8),
+			});
+
+			// 新增跳躍按鈕
+			const jumpButton = self.add.circle(700, 500, 40, 0x888888, 0.5);
+			jumpButton.setInteractive();
+
+			self.add
+				.text(700, 500, "↑", {
+					fontSize: "32px",
+					fill: "#fff",
+				})
+				.setOrigin(0.5);
+
+			jumpButton.on("pointerdown", () => {
+				if (player.body.touching.down && !gameOver) {
+					player.setVelocityY(-330);
+				}
+			});
+		}
+
+		// 處理搖桿輸入
+		function handleJoy() {
+			if (joyStick) {
+				const cursorKeys = joyStick.createCursorKeys();
+
+				if (cursorKeys.left.isDown) {
+					player.setVelocityX(-160);
+					player.anims.play("left", true);
+				} else if (cursorKeys.right.isDown) {
+					player.setVelocityX(160);
+					player.anims.play("right", true);
+				} else {
+					player.setVelocityX(0);
+					player.anims.play("turn");
+				}
+			}
 		}
 
 		initGame();
@@ -216,6 +362,7 @@ function GameComponent() {
 export default function GamePage() {
 	return (
 		<div className="game-container">
+			<PageStyles />
 			<h1>Phaser</h1>
 			<GameComponent />
 		</div>

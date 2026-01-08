@@ -1,5 +1,5 @@
-import { createGlobalStyle } from "styled-components";
 import { Link } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
 import css from "./style.css?raw";
 
 const PageStyles = createGlobalStyle`${css}`;
