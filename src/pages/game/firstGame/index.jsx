@@ -215,7 +215,7 @@ function GameComponent() {
 
 export default function GamePage() {
 	return (
-		<div>
+		<div className="game-container">
 			<h1>Phaser</h1>
 			<GameComponent />
 		</div>

@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 40px 0px;
 }
 
 .cards-grid {
@@ -48,9 +48,12 @@
 
 .card-content {
     position: absolute;
-    bottom: 0;
+    top: 70%;
     width: 100%;
-    padding: 24px;
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(to top, rgba(26, 26, 26, 0.95), transparent);
 }
 

@@ -38,6 +38,10 @@ export default function HomePage() {
 			image:
 				"https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=300&fit=crop",
 		},
+		{
+			to: "/game/gomoku",
+			title: "五子棋",
+		},
 	];
 
 	return (

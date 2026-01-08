@@ -13,6 +13,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+#root {
+	margin: 0 auto;
+	padding: 2rem;
+	text-align: center;
+}
+
+.game-container {}
+
 a {
   font-weight: 500;
   color: #646cff;
