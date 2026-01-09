@@ -85,6 +85,9 @@ function GameComponent() {
 		}
 
 		function create() {
+			// 啟用多點觸控（最多 2 個也就是 3 指額外的 pointer）
+			this.input.addPointer(2);
+
 			// 建立遊戲物件
 			self.add.image(0, 0, "sky").setOrigin(0, 0);
 
